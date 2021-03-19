@@ -1,0 +1,62 @@
+version: "3"
+services:
+  poll:
+    build: ./poll
+    depends_on:
+      - redis
+    ports:
+      - "5000:80"
+    networks:
+      - poll-tier
+    environment:
+      -
+    restart: unless-stopped
+  redis:
+    image: redis:buster
+    expose:
+      - 6379
+    ports:
+      - "6379:6379"
+    networks:
+      - poll-tier
+      - back-tier
+    restart: unless-stopped
+  worker:
+    build: ./worker
+    depends_on:
+      - redis
+      - db
+    networks:
+      - back-tier
+    environment:
+      -
+    restart: unless-stopped
+  result:
+    build: ./result
+    depends_on:
+      - db
+    ports:
+      - "5000:80"
+    networks:
+      - result-tier
+    environment:
+      -
+    restart: unless-stopped
+  db:
+    image: postgres:latest
+    networks:
+      - result-tier
+      - back-tier
+    volumes:
+      - db-data:
+    environment:
+      -
+    restart: unless-stopped
+
+networks:
+  poll-tier:
+  result-tier:
+  back-tier:
+
+volumes:
+  db-data:
