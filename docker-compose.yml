@@ -9,7 +9,7 @@ services:
     networks:
       - poll-tier
     environment:
-      -
+      - "127.0.0.1"
     restart: unless-stopped
   redis:
     image: redis:buster
@@ -29,7 +29,7 @@ services:
     networks:
       - back-tier
     environment:
-      -
+      - "127.0.0.1"
     restart: unless-stopped
   result:
     build: ./result
@@ -40,7 +40,7 @@ services:
     networks:
       - result-tier
     environment:
-      -
+      - "127.0.0.1"
     restart: unless-stopped
   db:
     image: postgres:latest
@@ -48,9 +48,9 @@ services:
       - result-tier
       - back-tier
     volumes:
-      - db-data:
+      - db-data:/var/lib/postgresql/data
     environment:
-      -
+      - POSTGRES_USER=postgres
     restart: unless-stopped
 
 networks:
